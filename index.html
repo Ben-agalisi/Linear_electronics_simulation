@@ -37,7 +37,7 @@ text{fill:var(--ink);font:12px system-ui,sans-serif}
 <p class="sub">Drag the gate voltage and watch the channel squeeze or widen.</p>
 
 <div class="card">
-<svg id="dev" viewBox="0 0 640 300" role="img" aria-label="Cross-section of an n-channel depletion MOSFET">
+<svg id="dev" viewBox="0 0 640 335" role="img" aria-label="Cross-section of an n-channel depletion MOSFET">
   <rect x="40" y="120" width="560" height="150" fill="var(--sub)" stroke="var(--line)"/>
   <text x="320" y="258" text-anchor="middle">p-type substrate (the base)</text>
   <rect x="60" y="120" width="110" height="70" fill="var(--np)"/>
@@ -58,6 +58,12 @@ text{fill:var(--ink);font:12px system-ui,sans-serif}
   <g id="dots"></g>
   <text x="115" y="215" text-anchor="middle" class="small">electrons enter</text>
   <text x="525" y="215" text-anchor="middle" class="small">electrons leave</text>
+  <polyline points="40,232 16,232 16,110 70,110" fill="none" stroke="var(--ink)" stroke-width="2"/>
+  <text x="50" y="238" class="small">substrate wired to source</text>
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--acc)"/></marker></defs>
+  <line x1="115" y1="300" x2="525" y2="300" stroke="var(--acc)" stroke-width="3" marker-end="url(#ah)"/>
+  <text x="320" y="292" text-anchor="middle" style="font-weight:700;fill:var(--acc)">VDS (positive at drain) pulls electrons from source to drain</text>
+  <text x="320" y="322" text-anchor="middle" style="font-weight:700">VGS (the slider) only controls how wide the channel is</text>
 </svg>
 </div>
 
@@ -75,7 +81,9 @@ text{fill:var(--ink);font:12px system-ui,sans-serif}
     <div class="mode" id="mode"></div>
     <div>Channel width: <b id="wid"></b> of its original size</div>
     <div class="big" id="idv" style="margin:6px 0"></div>
-    <div class="small" style="fill:none;color:var(--mute)">The formula with your numbers:</div>
+    <div id="why" style="margin:4px 0 8px"></div>
+    <div style="font-size:.85rem;color:var(--mute);margin-bottom:8px">Dots are a visual cue: the number of electrons in the channel sets the current, and dot speed only hints at it. VDS is assumed already on.</div>
+    <div style="font-size:.85rem;color:var(--mute)">The formula with your numbers:</div>
     <div class="calc" id="calc"></div>
   </div>
   <div class="card">
@@ -113,6 +121,7 @@ function draw(){
   $("vgsv").textContent=(vgs>0?"+":"")+vgs.toFixed(1)+" V";
   var m=vgs<=voff?"Cut-off: channel pinched shut, no current":vgs<0?"Depletion mode: channel narrowing":vgs===0?"Zero bias: channel as built, ID = IDSS":"Enhancement mode: channel widening";
   $("mode").textContent=m;
+  $("why").textContent=vgs<=voff?"Channel fully closed: no free electrons left to carry current.":vgs<0?"Negative gate repels electrons; holes from the substrate recombine with them, so fewer electrons carry current.":vgs===0?"No gate voltage: the channel built in at manufacture conducts.":"Positive gate attracts extra electrons into the channel, so more can carry current.";
   $("wid").textContent=Math.round(r.w*100)+"%";
   $("idv").textContent="ID = "+r.id.toFixed(2)+" mA";
   var ratio=vgs/voff;
